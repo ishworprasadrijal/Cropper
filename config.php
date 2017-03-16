@@ -17,9 +17,9 @@
 return (object) 
     [
     'hostname'=>'localhost',
-    'db_user'=>'root',
-    'db_password'=>'root@123',
-    'database_name'=>'fuel_media',
+    'db_user'=>'phpmyadmin_user',
+    'db_password'=>'your_phpmyadmin_password',
+    'database_name'=>'your_database_name',
 
 	'default'=>(object) array(
             'naming'=>array('CropperModule-','timestamp'),
@@ -29,7 +29,7 @@ return (object)
             'ps'=>'default',
         ),
     'galleries'=>(object)array(
-            'naming'=>array('ain_image-','timestamp'),
+            'naming'=>array('Gallery_image-','timestamp'),
             'size'=>array(600,400),
             'directory'=>'assets/media/galleries',
             'thumbnail'=>true,

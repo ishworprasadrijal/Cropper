@@ -13,7 +13,6 @@
   ================================*/
 ?>
 
-<?php var_dump($data);?>
 <div class="panel panel-info ic pull-left" data-directory="<?=$gallery->directory;?>" data-title="<?=$gallery->title;?>" data-id="<?=$gallery->id;?>">
 	<label class="copy_clip btn-success btn btn-xs" data-txt="anchor"> Copy</label>
 	<?php /* <label class="copy_clip btn-success btn btn-xs" data-txt="url" > Url</label> */ ?>
