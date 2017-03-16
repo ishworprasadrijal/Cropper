@@ -89,14 +89,6 @@ class GALLERY{
         return json_encode($response);
 	}
 
-	public function preview($id=null){
-		$id = $_POST['id'];
-		$data['croppedImage'] = $_POST['img'];
-		$data['gallery']=$this->db->find($id);
-		$view = include('preview');
-		return $view;
-	}
-
 	public function moreProcessing(){
 		$id = $_POST['id'];
 		$path = $_POST['path'];
@@ -121,7 +113,6 @@ class GALLERY{
 			   			$destination = $settings->directory.'/'.$upload->title;
 			   			$this->crop_resize($full_filename,$destination,$width,$height);
 			   			if(isset($settings->thumbnail)){
-			   				//resize and store thumbnail
 			   				if(!file_exists($settings->directory.'/thumbnails')){
 								mkdir($settings->directory.'/thumbnails', 0777);
 							}
@@ -136,7 +127,6 @@ class GALLERY{
 					if(file_put_contents($settings->directory.$upload->title, $data)){
 			   			$full_filename = $settings->directory.'/thumbnails/'.$upload->title;
 				    	if(isset($settings->thumbnail)){
-				    		//resize and store thumbnail
 			   				$destination = $settings->directory.'/thumbnails/'.$upload->title;
 			   				$this->crop_resize($full_filename,$destination,120,80);
 			   			}
@@ -157,4 +147,54 @@ class GALLERY{
 		imagecopyresized($thumb, $source, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
 		imagejpeg($thumb,$destination);
 	}
+
+	public function preview($id=null){
+		$id = $_POST['id'];
+		$data['croppedImage'] = $_POST['img'];
+		$data['gallery']=$this->db->find($id);
+		$view = include('preview.php');
+	}
+
+	public function next($id=0){
+		$preset = ($_POST['preset']=='')? 'default': $_POST['preset'];
+		$data['galleries'] = $this->db->fetch('select * from medias');
+		$data['preset']=$preset;
+		$view = include('response.php');
+		return $view;
+	}
+/*
+	public function more($id=0){
+		$data['galleries'] = $this->db->fetch('select * from `medias` ');
+		$view = include('response.php');
+		return $view;
+	}
+
+
+	public static function previous($id=0){
+		$preset = (\Input::Post('preset')=='')?'default':\Input::Post('preset');
+		$query = Model_Cropper::query()->where('module_name','=',$preset);
+		if($id!=0) $query->where('id','>',$id);
+		$data['galleries'] = $query->limit(14)->order_by('created_at','desc')->get();
+		$data['preset']=$preset;
+		$view = \View::forge('response',$data);
+		return $view;
+	}
+
+
+
+	public static function delete(){
+		$id = \Input::Post('id');
+		$gallery = Model_Cropper::find($id);
+		$gallery->delete();
+		if(\config::get('live') >= 1){
+            \Model_Rackspace::deleteObject($gallery->directory.DS.$gallery->title);
+            \Model_Rackspace::deleteObject($gallery->directory.DS.'thumbnail_'.$gallery->title);
+        }
+        unlink($gallery->directory.DS.$gallery->title);    
+        unlink($gallery->directory.DS.'thumbnail_'.$gallery->title);
+        $data['status']='success';
+        $data['message']='Successfully Removed';
+        return \Format::forge($data)->to_json();
+	}*/
+
 }

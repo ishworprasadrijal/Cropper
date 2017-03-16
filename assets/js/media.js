@@ -161,7 +161,7 @@ $(document).on('click','.copy_clip',function(){
     message = "{{key-site_url-key}}"+dir+'/'+title;
     $('#url').val(message);
   }else{
-    message = '<div><img src="{{key-site_url-key}}cropper/get_image/'+title+'/'+id+'" alt="img"></div>';
+    message = '<div><img src="cropper/get_image/'+title+'/'+id+'" alt="img"></div>';
     $('#url').val(message);
   }
     elem = $(document).find('#url');
@@ -179,7 +179,7 @@ $(document).on('click','.copy_clip',function(){
 $(document).on('click','.npg_js',function(){
   var last_id = $(this).data('last_id');
   var preset = $(this).data('preset');
-  var url = base_url+'cropper/next/'+last_id;
+  var url = 'cropper/requests.php/next/'+last_id;
   $.ajax({
     url:url,
     type:'post',
@@ -197,7 +197,7 @@ $(document).on('click','.npg_js',function(){
 $(document).on('click','.ppg_js',function(){
   var last_id = $(this).data('last_id');
   var preset = $(this).data('preset');
-  var url = base_url+'cropper/previous/'+last_id;
+  var url = 'cropper/requests.php/previous/'+last_id;
   $.ajax({
     url:url,
     type:'post',

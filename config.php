@@ -16,10 +16,10 @@
 <?php
 return (object) 
     [
-    'hostname'=>'localhost',
-    'db_user'=>'phpmyadmin_user',
-    'db_password'=>'your_phpmyadmin_password',
-    'database_name'=>'your_database_name',
+      'hostname'=>'localhost',
+      'db_user'=>'database_user',
+      'db_password'=>'database_password',
+      'database_name'=>'your_database_name',
 
 	'default'=>(object) array(
             'naming'=>array('CropperModule-','timestamp'),
