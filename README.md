@@ -34,3 +34,4 @@ Crop, resize and upload the minimized file. A fast, lightweight and complete app
                 'thumbnail'=>true,
                 'ps'=>'galleries',
             ),
+#4. View <a href="http://ishworprasadrijal.com.np" target="_blank"> Demo </a> Here.
