@@ -4,10 +4,13 @@ Crop, resize and upload the minimized file. A fast, lightweight and complete app
 
 #1. Configuration: (in config.php)
 
+      $base_url = 'http://'.$_SERVER['SERVER_NAME'].'/';
+      $docroot = '../';  /* absolute path from config.php to assets directory */
       'hostname'=>'localhost',
       'db_user'=>'database_user',
       'db_password'=>'database_password',
       'database_name'=>'your_database_name',
+      'table_name'=>'medias',/*can be overwritten later*/
   
 #2. Create a database with following properties :
 
