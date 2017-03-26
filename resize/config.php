@@ -14,26 +14,30 @@
 ?>
 
 <?php
-return (object) 
-    [
+$base_url = 'http://'.$_SERVER['SERVER_NAME'].'/';
+$docroot = '../';  /* absolute path from config.php */
+return (object) array(      
       'hostname'=>'localhost',
-      'db_user'=>'database_user',
-      'db_password'=>'database_password',
-      'database_name'=>'your_database_name',
+      'db_user'=>'root',
+      'db_password'=>'',
+      'database_name'=>'components_cropper',
+      'table_name'=>'medias',
+      'base_url'=>$base_url,
+      'docroot'=>$docroot,
 
-	'default'=>(object) array(
-            'naming'=>array('CropperModule-','timestamp'),
-            'size'=>array(600,400),
+  'default'=>(object) array(
+            'naming'=>array('cropperModule-','timestamp'),
+            'size'=>array(400,400),
             'directory'=>'assets/media/',
             'thumbnail'=>true,
             'ps'=>'default',
         ),
     'galleries'=>(object)array(
-            'naming'=>array('Gallery_image-','timestamp'),
-            'size'=>array(600,400),
-            'directory'=>'assets/media/galleries',
+            'naming'=>array('gallery_image-','timestamp'),
+            'size'=>array(400,400),
+            'directory'=>$docroot.'assets/media/galleries',
             'thumbnail'=>true,
             'ps'=>'galleries',
         ),
-    ];
+    );
 ?>

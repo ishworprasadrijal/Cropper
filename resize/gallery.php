@@ -16,16 +16,17 @@
 <?php
 class GALLERY{
 	public function __construct($preset='default') {
-        $this->config = include('config.php');
+        $this->db = require_once('db.php');
         $this->db = new DB();
+        $this->db->table_name ='medias';
     }
 
 	public function get_setting($preset='default'){
-		return $this->config->$preset;
+		return $this->db->config->$preset;
 	}
 
 	public function get_settings($preset='default'){
-		return json_encode($this->config->$preset);
+		return json_encode($this->db->config->$preset);
 	}
 
 	public function getNames($module_name='default',$params=array()){
@@ -55,7 +56,7 @@ class GALLERY{
 
 
 	public function upload(){
-		$id 		= $_POST["id"];
+		$id 		= isset($_POST["id"]) ? $_POST['id'] : '';
 		$preset 	= ($_POST["preset"]=='') ? 'default' : $_POST["preset"];
 		list($ext, $data) 	= explode(';', $_POST["ftype"]);
 		$settings 	= $this->get_setting($preset);
@@ -84,7 +85,7 @@ class GALLERY{
 	        $response['full_filename'] 	=$full_filename;
 	        $response['path'] 			= $path;
 	        $response['upload_id'] 		= $upload->id;
-	        $response['url'] 			= $_SERVER['SERVER_NAME'].$directory.'/'.$filename;
+	        $response['url'] 			= $directory.'/'.$filename;
 	        $response['status'] ="success";
         return json_encode($response);
 	}
@@ -102,6 +103,7 @@ class GALLERY{
 
 		if($upload){
 			$settings 	= $this->get_setting($upload->module_name);
+			$settings->directory = $settings->directory;
 			if($settings->ps!='default'){
 				$width = $settings->size[0];
 		       	$height = $settings->size[1];
@@ -122,9 +124,9 @@ class GALLERY{
 					}
 			}else{
 				if(!file_exists($settings->directory)){
-						mkdir($settings->directory, 0777);
+						mkdir($settings->directory, 0777,true);
 					}
-					if(file_put_contents($settings->directory.$upload->title, $data)){
+					if(file_put_contents($settings->directory.'/'.$upload->title, $data)){
 			   			$full_filename = $settings->directory.'/thumbnails/'.$upload->title;
 				    	if(isset($settings->thumbnail)){
 			   				$destination = $settings->directory.'/thumbnails/'.$upload->title;
@@ -148,9 +150,9 @@ class GALLERY{
 		imagejpeg($thumb,$destination);
 	}
 
-	public function preview($id=null){
-		$id = $_POST['id'];
-		$data['croppedImage'] = $_POST['img'];
+	public function preview($gid=null){
+		$id = isset($_POST['id']) ? $_POST['id'] : $gid;
+		$data['croppedImage'] = isset($_POST['img']) ? $_POST['img'] : '';
 		$data['gallery']=$this->db->find($id);
 		$view = include('preview.php');
 	}
@@ -160,41 +162,41 @@ class GALLERY{
 		$data['galleries'] = $this->db->fetch('select * from medias');
 		$data['preset']=$preset;
 		$view = include('response.php');
-		return $view;
-	}
-/*
-	public function more($id=0){
-		$data['galleries'] = $this->db->fetch('select * from `medias` ');
-		$view = include('response.php');
-		return $view;
 	}
 
-
-	public static function previous($id=0){
-		$preset = (\Input::Post('preset')=='')?'default':\Input::Post('preset');
-		$query = Model_Cropper::query()->where('module_name','=',$preset);
-		if($id!=0) $query->where('id','>',$id);
-		$data['galleries'] = $query->limit(14)->order_by('created_at','desc')->get();
-		$data['preset']=$preset;
-		$view = \View::forge('response',$data);
-		return $view;
+	public function crons(){
+		$sql = 'select * from medias where 1';
+		$recs = $this->db->fetch($sql);
+		foreach($recs as $rec){
+			unlink($rec->directory.'/'.$rec->title);
+			unlink($rec->directory.'/thumbnails/'.$rec->title);
+		}
+		$sql = 'truncate medias';
+		$this->db->execute($sql);
 	}
 
+	public function delete(){
+		$base_url = $_SERVER['HTTP_REFERER'];
+		$id = isset($_POST['id']) ? $_POST['id'] : null;
+		if($id)
+		$gallery = $this->db->find($id);
+		try{
+			$path = $base_url.'/'.$gallery->directory.'/'.$gallery->title;
+			$file = file_exists($path) ? $path : null;
+			if($file) unlink($file);
 
+			$thumbnail = $base_url.'/'.$gallery->directory.'/thumbnails/'.$gallery->title;
+			$tfile = file_exists($thumbnail) ? $thumbnail : null;
+			if($tfile) unlink($tfile);
 
-	public static function delete(){
-		$id = \Input::Post('id');
-		$gallery = Model_Cropper::find($id);
-		$gallery->delete();
-		if(\config::get('live') >= 1){
-            \Model_Rackspace::deleteObject($gallery->directory.DS.$gallery->title);
-            \Model_Rackspace::deleteObject($gallery->directory.DS.'thumbnail_'.$gallery->title);
-        }
-        unlink($gallery->directory.DS.$gallery->title);    
-        unlink($gallery->directory.DS.'thumbnail_'.$gallery->title);
-        $data['status']='success';
-        $data['message']='Successfully Removed';
-        return \Format::forge($data)->to_json();
-	}*/
+			$data['status']='success';
+	        $data['message']='Successfully Removed #'.$id;
+		}catch(exception $e){
+	        $data['status']='error';
+			$data['message'] = $e->getMessage();
+		}
+		$this->db->delete($id);
+        return json_encode($data);
+	}
 
 }

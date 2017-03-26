@@ -82,11 +82,13 @@ function re_crop(img,ps,elem){
             type:'post',
             dataType:'json',
             beforeSend:function(){
-              $('#modal').modal('hide');
               elem.attr('src',cropedimage);
+              $('#modal').modal('hide');
+              Notifier.info("Uploading");
             },
             success:function(response){
-              uploadSuccess(response,cropedimage);
+              console.log(response.upload_id);
+              uploadSuccess(response.upload_id,cropedimage);
               secondRequest(cropedimage,response.upload_id,response.path);
             },                    
             error:function(response){
@@ -95,6 +97,10 @@ function re_crop(img,ps,elem){
         });
         cropper.destroy();
     });
+
+   $(document).on('click', '.close', function () {
+        cropper.destroy();
+   });
 }
 
 function secondRequest(image,upload_id,path){
@@ -158,10 +164,10 @@ $(document).on('click','.copy_clip',function(){
   var txt = $(this).data('txt');
   var message ='';
   if(txt=='url'){
-    message = "{{key-site_url-key}}"+dir+'/'+title;
+    message = base_url+dir+'/'+title;
     $('#url').val(message);
   }else{
-    message = '<div><img src="cropper/get_image/'+title+'/'+id+'" alt="img"></div>';
+    message = $base_url+'assets/media/galleries/'+title;
     $('#url').val(message);
   }
     elem = $(document).find('#url');
@@ -179,7 +185,7 @@ $(document).on('click','.copy_clip',function(){
 $(document).on('click','.npg_js',function(){
   var last_id = $(this).data('last_id');
   var preset = $(this).data('preset');
-  var url = 'cropper/requests.php/next/'+last_id;
+  var url = 'requests.php/next/'+last_id;
   $.ajax({
     url:url,
     type:'post',
@@ -197,7 +203,7 @@ $(document).on('click','.npg_js',function(){
 $(document).on('click','.ppg_js',function(){
   var last_id = $(this).data('last_id');
   var preset = $(this).data('preset');
-  var url = 'cropper/requests.php/previous/'+last_id;
+  var url = 'requests.php/previous/'+last_id;
   $.ajax({
     url:url,
     type:'post',
@@ -214,14 +220,15 @@ $(document).on('click','.ppg_js',function(){
  : show thumbnail as soon as the file is uploaded
 ================================*/
 
-function uploadSuccess(response,cropedimage){
+function uploadSuccess(id,ci){
   $.ajax({
     url:'requests.php/preview',
     type:'post',
-    data:{id:response.upload_id,img:cropedimage},
+    data:{id:id,img:''},
     dataType:'html',
     success:function(re){
       $(document).find('.gallery-page .gallery-grid').prepend(re);
+      $('#preview_'+id).html('<img src='+ci+' style="max-width: 120px; height: 80px;">');
     }
   })
 
@@ -240,16 +247,16 @@ $(document).on('click','.toggle_gallery_js',function(){
  : remove media
 ================================*/
 $(document).on('click','.delete_media',function(){
-  var parent = $(this).parent();
+  var parent = $(this).closest('.panel-info');
   var id=$(this).data('id');
   $.ajax({
-    url:base_url+'cropper/delete/',
+    url:'requests.php/delete/',
     type:'post',
     dataType:'json',
     data:{id:id},
     success:function(response){
       parent.toggle('show');
-      Notifier.success('Removed Successfully');
+      Notifier.success(response.message);
     }
     
   })

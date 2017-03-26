@@ -11,6 +11,7 @@
    
     
   ================================*/
+ $base_url = 'http://'.$_SERVER['SERVER_NAME'];
 ?>
 
 <?php $_galleries = $data['galleries'];  ?>
@@ -24,7 +25,7 @@
 				<label class="copy_clip btn-success btn btn-xs" data-txt="anchor"> Copy</label>
 				<label class="delete_media btn-danger btn btn-xs" data-txt="anchor" data-id="<?php echo $_gallery->id;?>"> Delete</label>
 				<div style="margin: 3px;">
-					<img src="<?php echo $_gallery->directory.'/thumbnails/'.$_gallery->title; ?>">
+					<img src="<?php echo $base_url.'/'.$_gallery->directory.'/thumbnails/'.$_gallery->title; ?>">
 				</div>
 			</div> 
 		<?php $npg_id = $_gallery->id; 
