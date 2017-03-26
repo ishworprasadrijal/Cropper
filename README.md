@@ -37,3 +37,14 @@ Crop, resize and upload the minimized file. A fast, lightweight and complete app
                 'thumbnail'=>true,
                 'ps'=>'galleries',
             ),
+#4. See <a href="http://ishworprasadrijal.com.np"> Demo here </a>.
+
+# What is Cropper?
+It is aimed to develop a image uploader plugin for php that allows you to define image size in the config file, and allow you to select region during uploading process and upload selected region of the image only to server due to which,
+your all uploaded image have similar size throughout the project
+you will be able to upload necessary section of image only
+
+It will allow you to show preview before uploading and will upload in background so you can continue working on your page parallelly while cropper is uploading, resizing and so on.
+
+This uses cropper.js to show selected region.
+
